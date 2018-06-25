@@ -60,10 +60,9 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-       
-        // Testing
         let vc = CommentsViewController()
         vc.subreddit = presenter.posts[indexPath.row].subreddit
+        vc.id = presenter.posts[indexPath.row].id
         self.navigationController?.pushViewController(vc, animated: true)
         
     }

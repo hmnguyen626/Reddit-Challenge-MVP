@@ -11,7 +11,7 @@ import Foundation
 struct CommentData: Decodable {
     
     var author: String?
-    //var score: Int?
+    var score: Int?
     var body: String?
     
 }

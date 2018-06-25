@@ -10,6 +10,8 @@ import Foundation
 
 class APIClientService {
     
+    // Function that makes an API request to reddit api
+    // route: /r/all/<endpoint>.json
     func makeThreadRequest(url: URL, completion: @escaping ([PostData], String) -> Void ){
         
         let session = URLSession.shared
@@ -43,11 +45,11 @@ class APIClientService {
         
     }
     
+    // Function that makes an API request to reddit api
+    // route: /r/<subreddit>/comments/<id>.json
     func makeCommentRequest(url: URL, completion: @escaping ([CommentData]) -> Void ){
         
         let session = URLSession.shared
-        
-        print(url)
         
         session.dataTask(with: url) {
             (data, response, error) in
@@ -60,7 +62,7 @@ class APIClientService {
                         
                         // Decoding JSON that are top-level arrays, use .decode([].self, from:)
                         let json = try JSONDecoder().decode([JSONComment].self, from: data)
-                                                
+                        
                         // Map our list of posts to an array on non-nil PostData objects
                         let comments = json[1].data.children.compactMap{ $0.data }
                         

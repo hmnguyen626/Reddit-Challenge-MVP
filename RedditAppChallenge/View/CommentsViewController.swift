@@ -18,10 +18,15 @@ class CommentsViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        commentsTableView.delegate = self
-        commentsTableView.dataSource = self
+        // Make a request depending on the selected Cell
+        if let subreddit = subreddit, let id = id {
+            presenter.runAPIClient(by: subreddit, by: id)
+        }
         
         setup()
+        
+        // Attach the presenter to give it little control over the life cycle of this current viewcontroller
+        presenter.attachView(view: self)
     }
     
     // ------------------------------------------------------------------------------------------
@@ -37,15 +42,15 @@ class CommentsViewController: UIViewController, UITableViewDelegate, UITableView
     // ------------------------------------------------------------------------------------------
     // MARK: - Tableview Datasource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return presenter.comments.count - 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = commentsTableView.dequeueReusableCell(withIdentifier: "CustomTableViewCell", for: indexPath) as! CustomTableViewCell
         
-        cell.nameLabel.text = "Hieumongous Nguyen"
-        cell.bodyLabel.text = "What you're using isn't a segue. This is just pushing a NEW instance (not the same one) of view controller onto the nav stack."
-        cell.upVotesLabel.text = "7046"
+        cell.nameLabel.text = presenter.comments[indexPath.row].author
+        cell.bodyLabel.text = presenter.comments[indexPath.row].body
+        cell.upVotesLabel.text = String(presenter.comments[indexPath.row].score!)
         
         return cell
     }
@@ -95,6 +100,23 @@ class CommentsViewController: UIViewController, UITableViewDelegate, UITableView
 
         
     }
-    
-    
 }
+
+extension CommentsViewController: CommentVC {
+    func startLoading() {
+        DispatchQueue.main.async {
+            self.commentsTableView.delegate = nil
+            self.commentsTableView.dataSource = nil
+        }
+    }
+    
+    func finishLoading() {
+        DispatchQueue.main.async {
+            self.commentsTableView.delegate = self
+            self.commentsTableView.dataSource = self
+            self.commentsTableView.reloadData()
+        }
+    }
+}
+
+

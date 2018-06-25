@@ -22,7 +22,7 @@ class CommentPresenter {
     var comments = [CommentData]()
     
     init(){
-        runAPIClient(by: "gameofthrones", by: "8taadc")
+        
     }
     
     // ------------------------------------------------------------------------------------------
@@ -43,7 +43,8 @@ class CommentPresenter {
     func runAPIClient(by subreddit: String, by id: String){
         self.comments = []
         
-        //startloading()
+        // Call startloading to turn delegates & datasource = nil
+        commentView?.startLoading()
         
         guard let url = URL(string: "https://www.reddit.com/r/\(subreddit)/comments/\(id).json") else { return }
         
@@ -51,9 +52,9 @@ class CommentPresenter {
             (comments) in
             
             self.comments = comments
-            print(self.comments)
             
-            // End loading
+            // Resume by turning delegates & datasource = self, within CommentViewController
+            self.commentView?.finishLoading()
         }
     }
     
