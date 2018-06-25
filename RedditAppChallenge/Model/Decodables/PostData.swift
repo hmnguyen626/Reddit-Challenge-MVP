@@ -9,14 +9,14 @@
 import UIKit
 
 struct PostData: Decodable {
-    let title: String?
-    let thumbnail: String?
+    var title: String?
+    var thumbnail: String?
     var thumbnailImageData: Data?
     
     // subreddit and id is used later to make a request to reddit api to get comments for an article
     // Link - https://www.reddit.com/dev/api/#GET_comments_{article}
     // url example: /r/<subreddit>/comments/<id>.json
-    let id: String?
-    let subreddit: String?
+    var id: String?
+    var subreddit: String?
     
 }

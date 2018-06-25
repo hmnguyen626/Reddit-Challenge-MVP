@@ -11,7 +11,7 @@ import Foundation
 struct ChildrenCollection: Decodable {
     
     var children: [Child]
-    let after: String?
+    var after: String?
     
 }
 

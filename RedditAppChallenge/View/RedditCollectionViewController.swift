@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RedditCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class RedditViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     // ------------------------------------------------------------------------------------------
     // Mark: - Initialize our MainPresenter class
     let presenter = PostPresenter()
@@ -22,12 +22,14 @@ class RedditCollectionViewController: UICollectionViewController, UICollectionVi
         presenter.attachView(view: self)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        presenter.preparePosts()
+    }
     
     // ------------------------------------------------------------------------------------------
     // MARK: - UICollection methods
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         // Use presenter in future to return list size here
         return 10
     }
@@ -36,38 +38,8 @@ class RedditCollectionViewController: UICollectionViewController, UICollectionVi
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCollectionViewCell", for: indexPath) as! CustomCollectionViewCell
         
-        // Testing
-        cell.postTitleLabel.text = presenter.json?.data.children[indexPath.row].data.title
-        cell.postSubredditNameLabel.text = presenter.json?.data.children[indexPath.row].data.subreddit
-        
-        
-        
-        // Reddit API has three states for thumbnail: an imageURL, default, or self.
-        // In the cases of default it is usually a video/gif, and for self it is an empty thumbnail.  For simplicity of the application
-        // I will make the thumbnail image as "default_image.jpeg" for cases other than an imageURL.
-        let state = presenter.json?.data.children[indexPath.row].data.thumbnail
-        
-        switch state {
-        case "default":
-            cell.thumbnailImageView.image = UIImage(named: "default_image.jpeg")
-        case "self":
-            cell.thumbnailImageView.image = UIImage(named: "default_image.jpeg")
-        case nil:
-            cell.thumbnailImageView.image = UIImage(named: "default_image.jpeg")
-        default:
-            if let url = URL(string: state!) {
-                presenter.getDataFromUrl(url: url) {
-                    (data, response, error) in
-                    
-                    if let data = data {
-                        cell.thumbnailImageView.image = UIImage(data: data)
-                    }
-                }
-            }
-        }
-        
-        //MARK: - Work around this way
-        //cell.thumbnailImageView.image = presenter.thumbnail
+        cell.postTitleLabel.text = presenter.posts[indexPath.row].title
+        cell.postSubredditNameLabel.text = presenter.posts[indexPath.row].subreddit
         
         return cell
     }
@@ -106,7 +78,7 @@ class RedditCollectionViewController: UICollectionViewController, UICollectionVi
     
 }
 
-extension RedditCollectionViewController: RedditVC {
+extension RedditViewController: RedditVC {
     func startLoading() {
         activityIndicator.startAnimating()
     }
@@ -115,7 +87,7 @@ extension RedditCollectionViewController: RedditVC {
         activityIndicator.stopAnimating()
     }
 
-    func setPosts(posts: JSONReddit) {
+    func setPosts(posts: [PostData]) {
         print("")
     }
 
@@ -124,7 +96,7 @@ extension RedditCollectionViewController: RedditVC {
     }
 }
 
-extension RedditCollectionViewController {
+extension RedditViewController {
     
     // Set our collectionview cell's width to our windowframe and a height of 300
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
