@@ -6,13 +6,12 @@
 //  Copyright © 2018 HMdev. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 protocol RedditVC: NSObjectProtocol {
     func startLoading()
     func finishLoading()
-    func setPosts(posts: [PostData])
-    func setEmptyPosts()
+    func loadMore()
     
 }
 
@@ -27,7 +26,7 @@ class PostPresenter {
     var after = ""
     
     init(){
-        grabRedditData(by: "hot")
+        grabRedditData(by: "top")
     }
     
     // ------------------------------------------------------------------------------------------
@@ -48,6 +47,9 @@ class PostPresenter {
     // MARK: - Function that makes a https get request to reddit api
     // Link: https://stackoverflow.com/questions/35357807/running-one-function-after-another-completes
     func grabRedditData(by endpoint: String){
+        
+        // Empty our collection
+        posts = []
         
         // Reference our view and set delegates = nil, so loaded data can be downloaded before view use data as datasources
         redditView?.startLoading()
@@ -84,20 +86,37 @@ class PostPresenter {
         }.resume()
     }
     
-
-    
-    func downloadImageData(for index: Int, completion: @escaping (Data) -> Void){
+    // ------------------------------------------------------------------------------------------
+    // Presenter will download the imageData and return Data back to the view
+    // MARK: - Download Image Data and send to view
+    func downloadImageData(for index: Int, completion: @escaping (UIImage?) -> Void){
         
         guard let url = URL(string: posts[index].thumbnail!) else { return }
+        
+        // Reddit API returns a thumbnail string, but there are 3 cases: default, self, and an imageurl
+        // default: is a gif/video
+        // self: is an empty body text, which only has a title or reference to another reddit article
+        // imageurl: a link to an imageurl
+        // For default and self, I will set the images to a default_image.jpeg, but will retrieve the imagedata for imageurl
+        if posts[index].thumbnail == "default" {
+            let image = UIImage(named: "default_image.jpeg")
+            completion(image)
+        }
+        else if posts[index].thumbnail == "self" {
+            let image = UIImage(named: "default_image.jpeg")
+            completion(image)
+        }
         
         URLSession.shared.dataTask(with: url) {
             data, response, error in
             
             if error != nil {
-                print(error)
+                print(error!)
             } else {
                 if let data = data {
-                    completion(data)
+                    
+                    let image = UIImage(data: data)
+                    completion(image)
                 }
             }
         }.resume()

@@ -8,9 +8,9 @@
 
 import UIKit
 
-class RedditViewController: UINavigationController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+class RedditViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     // ------------------------------------------------------------------------------------------
-    // Mark: - Initialize our MainPresenter class
+    // Mark: - Initialize our PostPresenter class to handle all the business logic.  Our RedditViewController should have no knowledge of any business logic; it should only be responsible for updating the view with the model presented by the Presenter.
     let presenter = PostPresenter()
     
     override func viewDidLoad() {
@@ -19,6 +19,7 @@ class RedditViewController: UINavigationController, UICollectionViewDelegate, UI
         // UI Setup
         setup()
         
+        // Attach the presenter to give it little control over the life cycle of this current viewcontroller
         presenter.attachView(view: self)
     }
     
@@ -30,22 +31,28 @@ class RedditViewController: UINavigationController, UICollectionViewDelegate, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCollectionViewCell", for: indexPath) as! CustomCollectionViewCell
         
+        // Animate our loading
+        cell.activityIndicator.startAnimating()
+        
+        // Set text properties of our cell
         cell.postTitleLabel.text = presenter.posts[indexPath.row].title
         cell.postSubredditNameLabel.text = presenter.posts[indexPath.row].subreddit
         
-        presenter.downloadImageData(for: indexPath.row) { (data) in
+        presenter.downloadImageData(for: indexPath.row) { (image) in
             DispatchQueue.main.async {
-                cell.thumbnailImageView.image = UIImage(data: data)
+                cell.thumbnailImageView.image = image
+                
+                // Stop animating our loading
+                cell.activityIndicator.stopAnimating()
             }
         }
         
         return cell
-        
     }
 
+    // Set a dynamic size for each of the cell in our CollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: collectionView.frame.width, height: 300)
@@ -54,13 +61,6 @@ class RedditViewController: UINavigationController, UICollectionViewDelegate, UI
     
     // ------------------------------------------------------------------------------------------
     // MARK: - Views
-    let activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView()
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        return indicator
-    }()
-    
     let mainCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
@@ -69,47 +69,79 @@ class RedditViewController: UINavigationController, UICollectionViewDelegate, UI
         return collectionView
     }()
     
+    lazy var hotBarButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(barButtonAction))
+        barButtonItem.tintColor = UIColor.white
+        barButtonItem.tag = 1
+        
+        return barButtonItem
+    }()
+    
+    lazy var randomBarButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(title: "Hot", style: .plain, target: self, action: #selector(barButtonAction))
+        barButtonItem.tintColor = UIColor.white
+        barButtonItem.tag = 2
+        
+        return barButtonItem
+    }()
+    
     // ------------------------------------------------------------------------------------------
     // MARK: - UI Setup
     private func setup(){
+        setupMainView()
+        setupSubViews()
+        setupConstraints()
+    }
+    
+    private func setupMainView(){
+        navigationController?.navigationBar.barTintColor = UIColor.black
+        navigationController?.navigationBar.tintColor = UIColor.black
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        self.navigationItem.title = "Reddit Challenge"
+        self.navigationItem.rightBarButtonItem = hotBarButton
+        self.navigationItem.leftBarButtonItem = randomBarButton
+        
         // Register custom cell class
         mainCollectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCollectionViewCell")
         
         // Bg color
         mainCollectionView.backgroundColor = UIColor(red: 0/255, green: 0/255, blue: 51/255, alpha: 1)
-        
-        setupSubViews()
-        setupConstraints()
     }
     
     private func setupSubViews(){
-        view.addSubview(activityIndicator)
         view.addSubview(mainCollectionView)
     }
     
     private func setupConstraints(){
-        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
         mainCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
         mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
     }
     
+    // ------------------------------------------------------------------------------------------
+    // MARK: - Actions
+    @objc func barButtonAction(sender: UIBarButtonItem){
+        switch sender.tag {
+        case 1:
+            presenter.grabRedditData(by: "new")
+        case 2:
+            presenter.grabRedditData(by: "hot")
+        default:
+            print("nope")
+        }
+    }
+    
+    
+    
 }
 
-// Conforming to our PostPresenter protocols
 extension RedditViewController: RedditVC {
     
-    // By setting our collectionview delegate and datasource to nil, we ensure that our datasource will not attempt to load data until the presenter has data to present to our viewcontroller
     func startLoading() {
         DispatchQueue.main.async {
             self.mainCollectionView.delegate = nil
             self.mainCollectionView.dataSource = nil
-            self.activityIndicator.startAnimating()
         }
     }
     
@@ -117,16 +149,12 @@ extension RedditViewController: RedditVC {
         DispatchQueue.main.async {
             self.mainCollectionView.delegate = self
             self.mainCollectionView.dataSource = self
-            self.activityIndicator.stopAnimating()
+            self.mainCollectionView.reloadData()
         }
     }
     
-    func setPosts(posts: [PostData]) {
-        print("")
-    }
-    
-    func setEmptyPosts() {
-        print("")
+    func loadMore() {
+        
     }
 }
 

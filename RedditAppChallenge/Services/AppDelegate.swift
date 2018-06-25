@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Inject and make RedditCollectionViewController rootVC of UINavigationController
         window = UIWindow(frame: UIScreen.main.bounds)
-        let rootViewController = RedditViewController()
+        let rootViewController = UINavigationController(rootViewController: RedditViewController())
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()
         

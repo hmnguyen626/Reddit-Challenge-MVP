@@ -103,6 +103,11 @@ class CustomCollectionViewCell: UICollectionViewCell {
         thumbnailImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
         thumbnailImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
         thumbnailImageView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor, constant: 5).isActive = true
+        
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: thumbnailImageView.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: thumbnailImageView.centerYAnchor).isActive = true
     }
    
     
