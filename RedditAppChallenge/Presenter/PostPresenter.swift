@@ -8,11 +8,10 @@
 
 import UIKit
 
+// Protocol to handle delegates/datasource of VC
 protocol RedditVC: NSObjectProtocol {
     func startLoading()
     func finishLoading()
-    func loadMore()
-    
 }
 
 // Our presenter will handle our model and it's modifications to keep the logic away from the view.  The view should know little or nothing about the business logic.
@@ -24,9 +23,10 @@ class PostPresenter {
     // Model
     var posts = [PostData]()
     var after = ""
+    var category = "top"
     
     init(){
-        runApiClient(by: "top")
+        runApiClientNewPost(by: category)
     }
     
     // ------------------------------------------------------------------------------------------
@@ -43,9 +43,10 @@ class PostPresenter {
     }
     
     // ------------------------------------------------------------------------------------------
-    // MARK: - Function that makes a https get request to reddit api
-    func runApiClient(by endpoint: String){
+    // MARK: - Function that makes a https get request to reddit api and then assign data to model
+    func runApiClientNewPost(by endpoint: String){
         self.posts = []
+        self.category = endpoint
         
         // Reference our view and set delegates = nil, so loaded data can be downloaded before view use data as datasources
         redditView?.startLoading()
@@ -57,6 +58,23 @@ class PostPresenter {
             (posts, after) in
             
             self.posts = posts
+            self.after = after
+            self.redditView?.finishLoading()
+            
+        }
+        
+    }
+    
+    // Grabs more posts with after token, and also append to existing posts
+    func runApiClientMorePost(with token: String){
+        
+        redditView?.startLoading()
+        guard let url = URL(string: "https://www.reddit.com/r/all/\(self.category).json?after=\(token)") else { return }
+        
+        redditAPIClient.makeThreadRequest(url: url) {
+            (posts, after) in
+            
+            self.posts.append(contentsOf: posts)
             self.after = after
             self.redditView?.finishLoading()
             

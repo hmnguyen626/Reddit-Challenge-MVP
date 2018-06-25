@@ -8,6 +8,7 @@
 
 import Foundation
 
+// Protocol to handle delegates/datasource of VC
 protocol CommentVC: NSObjectProtocol {
     func startLoading()
     func finishLoading()
@@ -39,7 +40,7 @@ class CommentPresenter {
     }
     
     // ------------------------------------------------------------------------------------------
-    // MARK: -
+    // MARK: - Function that makes a https get request to reddit api and then assign data to model
     func runAPIClient(by subreddit: String, by id: String){
         self.comments = []
         

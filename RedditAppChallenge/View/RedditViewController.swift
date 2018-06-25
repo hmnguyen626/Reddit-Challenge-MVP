@@ -24,7 +24,7 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     // ------------------------------------------------------------------------------------------
-    // MARK: - UICollection methods
+    // MARK: - UICollectionView Datasource Methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return presenter.posts.count
@@ -52,6 +52,18 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
         return cell
     }
 
+    // ------------------------------------------------------------------------------------------
+    // MARK: - UICollectionView Delegate methods
+    
+    // Detect end of collectionview, and promptly load more
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == presenter.posts.count - 1 {
+            self.presenter.runApiClientMorePost(with: presenter.after)
+            
+            print("loading more")
+        }
+    }
+    
     // Set a dynamic size for each of the cell in our CollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -132,11 +144,11 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
     @objc func barButtonAction(sender: UIBarButtonItem){
         switch sender.tag {
         case 1:
-            presenter.runApiClient(by: "new")
+            presenter.runApiClientNewPost(by: "new")
         case 2:
-            presenter.runApiClient(by: "hot")
+            presenter.runApiClientNewPost(by: "hot")
         default:
-            print("nope")
+            print("Invalid.")
         }
     }
     
@@ -159,10 +171,6 @@ extension RedditViewController: RedditVC {
             self.mainCollectionView.dataSource = self
             self.mainCollectionView.reloadData()
         }
-    }
-    
-    func loadMore() {
-        
     }
 }
 
