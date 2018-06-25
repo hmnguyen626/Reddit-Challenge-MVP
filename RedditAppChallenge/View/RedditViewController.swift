@@ -1,6 +1,6 @@
 //
-//  ViewController.swift
-//  RedditChallenge
+//  RedditViewController.swift
+//  RedditAppChallenge
 //
 //  Created by Hieu Nguyen on 6/22/18.
 //  Copyright © 2018 HMdev. All rights reserved.

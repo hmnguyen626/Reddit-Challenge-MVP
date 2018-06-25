@@ -22,9 +22,6 @@ class CommentPresenter {
     // Model
     var comments = [CommentData]()
     
-    init(){
-        
-    }
     
     // ------------------------------------------------------------------------------------------
     // MARK: - Presenter's control over CommentViewController's life cycle
