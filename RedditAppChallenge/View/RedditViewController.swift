@@ -59,6 +59,15 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+       
+        // Testing
+        let vc = CommentsViewController()
+        vc.subreddit = presenter.posts[indexPath.row].subreddit
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+    }
+    
     // ------------------------------------------------------------------------------------------
     // MARK: - Views
     let mainCollectionView: UICollectionView = {
@@ -97,7 +106,7 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
         navigationController?.navigationBar.barTintColor = UIColor.black
         navigationController?.navigationBar.tintColor = UIColor.black
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
-        self.navigationItem.title = "Reddit Challenge"
+        self.navigationItem.title = "Home"
         self.navigationItem.rightBarButtonItem = hotBarButton
         self.navigationItem.leftBarButtonItem = randomBarButton
         

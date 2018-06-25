@@ -25,6 +25,7 @@
 		A074A41920E0D9E60039482F /* CommentChildrenCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A074A41820E0D9E60039482F /* CommentChildrenCollection.swift */; };
 		A074A41B20E0D9FB0039482F /* CommentChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = A074A41A20E0D9FB0039482F /* CommentChild.swift */; };
 		A074A41D20E0DB090039482F /* CommentPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A074A41C20E0DB080039482F /* CommentPresenter.swift */; };
+		A074A42120E0F6D60039482F /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A074A42020E0F6D60039482F /* CustomTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		A074A41820E0D9E60039482F /* CommentChildrenCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentChildrenCollection.swift; sourceTree = "<group>"; };
 		A074A41A20E0D9FB0039482F /* CommentChild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentChild.swift; sourceTree = "<group>"; };
 		A074A41C20E0DB080039482F /* CommentPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentPresenter.swift; sourceTree = "<group>"; };
+		A074A42020E0F6D60039482F /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				A039DABE20E02029007FF196 /* CustomCollectionViewCell.swift */,
+				A074A42020E0F6D60039482F /* CustomTableViewCell.swift */,
 			);
 			path = "Custom Cell";
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 			files = (
 				A039DACF20E02173007FF196 /* PostPresenter.swift in Sources */,
 				A074A41720E0D9D20039482F /* CommentData.swift in Sources */,
+				A074A42120E0F6D60039482F /* CustomTableViewCell.swift in Sources */,
 				A039DAC320E02088007FF196 /* JSONReddit.swift in Sources */,
 				A074A41D20E0DB090039482F /* CommentPresenter.swift in Sources */,
 				A074A41920E0D9E60039482F /* CommentChildrenCollection.swift in Sources */,

@@ -26,7 +26,6 @@ class CustomCollectionViewCell: UICollectionViewCell {
         let label = UILabel(frame: .zero)
         label.font = UIFont(name: "HelveticaNeue", size: 18)
         label.numberOfLines = 3
-        //label.sizeToFit()
         label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         
