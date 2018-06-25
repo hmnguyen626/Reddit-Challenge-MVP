@@ -10,8 +10,29 @@ import UIKit
 
 class CommentsViewController: UIViewController {
     
+    let presenter = CommentPresenter()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setup()
+    }
+    
+    // ------------------------------------------------------------------------------------------
+    // MARK: - Views
+    
+    
+    // ------------------------------------------------------------------------------------------
+    // MARK: - UI Setup
+    private func setup(){
+        
+    }
+    
+    private func setupSubViews(){
+        
+    }
+    
+    private func setupConstraints(){
         
     }
     

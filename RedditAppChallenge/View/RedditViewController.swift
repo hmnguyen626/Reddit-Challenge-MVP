@@ -27,7 +27,7 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
     // MARK: - UICollection methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return presenter.listCount
+        return presenter.posts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -124,9 +124,9 @@ class RedditViewController: UIViewController, UICollectionViewDelegate, UICollec
     @objc func barButtonAction(sender: UIBarButtonItem){
         switch sender.tag {
         case 1:
-            presenter.grabRedditData(by: "new")
+            presenter.runApiClient(by: "new")
         case 2:
-            presenter.grabRedditData(by: "hot")
+            presenter.runApiClient(by: "hot")
         default:
             print("nope")
         }

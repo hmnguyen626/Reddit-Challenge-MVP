@@ -18,15 +18,15 @@ protocol RedditVC: NSObjectProtocol {
 // Our presenter will handle our model and it's modifications to keep the logic away from the view.  The view should know little or nothing about the business logic.
 class PostPresenter {
     
-    // Our API layer for Reddit
-    //let redditAPIClient = RedditAPI()
-    var json: JSONReddit?
+    // The APIClientService object I created is to further decouple the presenter(s) from the API.  This will allow for better code reusability and abstraction
+    let redditAPIClient = APIClientService()
+    
+    // Model
     var posts = [PostData]()
-    var listCount = 25
     var after = ""
     
     init(){
-        grabRedditData(by: "top")
+        runApiClient(by: "top")
     }
     
     // ------------------------------------------------------------------------------------------
@@ -43,47 +43,25 @@ class PostPresenter {
     }
     
     // ------------------------------------------------------------------------------------------
-    // Use URLSession to make a request to reddit api with a given subreddit string
     // MARK: - Function that makes a https get request to reddit api
-    // Link: https://stackoverflow.com/questions/35357807/running-one-function-after-another-completes
-    func grabRedditData(by endpoint: String){
-        
-        // Empty our collection
-        posts = []
+    func runApiClient(by endpoint: String){
+        self.posts = []
         
         // Reference our view and set delegates = nil, so loaded data can be downloaded before view use data as datasources
         redditView?.startLoading()
         
         guard let url = URL(string: "https://www.reddit.com/r/all/\(endpoint).json") else { return }
-        let session = URLSession.shared
         
-        session.dataTask(with: url) {
-            (data, response, error) in
+        // Make a request to our APIClient and set model data from completion block
+        redditAPIClient.makeThreadRequest(url: url) {
+            (posts, after) in
             
-            if error != nil {
-                
-            } else {
-                if let data = data {
-                    do {
-                        // Decode our data with codable.  See "/Model/Decodables"
-                        let json = try JSONDecoder().decode(JSONReddit.self, from: data)
-                        
-                        // Map our list of posts to an array on non-nil PostData objects
-                        self.posts = json.data.children.compactMap{ $0.data }
-                        
-                        if let after = json.data.after {
-                            self.after = after
-                        }
-                        
-                        // Reference our view and set delegates = RedditViewController, to start loading data as datasource
-                        self.redditView?.finishLoading()
-                        
-                    } catch {
-                        print("error")
-                    }
-                }
-            }
-        }.resume()
+            self.posts = posts
+            self.after = after
+            self.redditView?.finishLoading()
+            
+        }
+        
     }
     
     // ------------------------------------------------------------------------------------------
